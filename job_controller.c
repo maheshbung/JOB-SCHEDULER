@@ -81,7 +81,8 @@ void startJob(JOB* job, int index)
 		char* arr[64];
 		arr[0] = job->job_command;
 		int i = 1;
-		for (int o = 0; job->args[o] != NULL; i++, o++)
+		int o = 0;
+		for (o; job->args[o] != NULL; i++, o++)
 		{
 			arr[i] = job->args[o];
 		}
@@ -134,8 +135,8 @@ void* scheduler(void* arg)
 		pthread_mutex_lock(&runningJobsMutex);
 
 		//printf("checking index : [%d]\n", runningJobs->runningJobsIndex);
-
-		for (int i = 0; i < runningJobs->maxJobs; i++)
+		int i = 0;
+		for (i; i < runningJobs->maxJobs; i++)
 		{
 			int status;
 			int current_pid = runningJobs->runningJobsPid[i];
@@ -194,7 +195,8 @@ void showJobs()
 	printf("JOBID\tJOB NAME\t\t\tSTATUS\n");
 	printf("--------------------------------------------------------------------------------------------------\n");
 	pthread_mutex_lock(&runningJobsMutex);
-	for (int i = 0; i < runningJobs->maxJobs; i++)
+	int i = 0;
+	for (i; i < runningJobs->maxJobs; i++)
 	{
 		if (runningJobs->runningJobs[i] != NULL)
 		{
@@ -236,7 +238,8 @@ void initializeJobController(int maxJobs)
 //call at end of scheduling
 void freeJobController()
 {
-	for (int i = 0; i < runningJobs->maxJobs; i++)
+	int i = 0;
+	for (i; i < runningJobs->maxJobs; i++)
 	{
 		if (runningJobs->runningJobs[i] != NULL)
 			freeUpJob(runningJobs->runningJobs[i]);
