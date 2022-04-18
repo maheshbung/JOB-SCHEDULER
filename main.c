@@ -27,3 +27,47 @@ void showCommandList()
 	printf("\t exit :\t\t Will stop scheduler. All running and waiting jobs will be completed before exiting. Prompt will not be shown further.\n");
 
 }
+
+int parseInput(char* input)
+{
+	char* inputStringCopy = malloc(strlen(input) + 1);
+	strcpy(inputStringCopy, input);
+
+	// get the command passed 
+	char* command = strtok(input, " ");
+	char* newline = strchr(command, '\n');
+	if (newline)
+		*newline = 0;
+	if (!strcmp(command, "submit"))
+	{
+		// get rest of input which is job info
+		char* jobInfo = strchr(inputStringCopy, ' ');
+		if (jobInfo == NULL)
+		{
+			printf("No job passed with submit command!\n");
+			free(inputStringCopy);
+			return 0;
+		}
+		addToJobQueue(createNewJob(jobInfo));
+	}
+	else if (!strcmp(command, "showjobs"))
+	{
+		showJobs();
+	}
+	else if (!strcmp(command, "help"))
+	{
+		showCommandList();
+	}
+	else if (!strcmp(command, "exit"))
+	{
+		free(inputStringCopy);
+		stopScheduler = 1;
+		return 1;
+	}
+	else
+	{
+		printf("wrong command !\n");
+	}
+	free(inputStringCopy);
+	return 0;
+}
