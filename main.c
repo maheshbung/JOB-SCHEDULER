@@ -71,3 +71,41 @@ int parseInput(char* input)
 	free(inputStringCopy);
 	return 0;
 }
+
+int main(int argc, char** argv)
+{
+	if (argc < 2)
+	{
+		printf("Please enter number of cores!\n");
+		exit(-1);
+	}
+	initializeJobController(atoi(argv[1]));
+	pthread_t schedulerThread;
+	int retCode = pthread_create(&schedulerThread, NULL, scheduler, NULL);
+	if (retCode)
+	{
+		printf("Failed to create scheduler thread!\n");
+		exit(-1);
+	}
+
+	showCommandList();
+	char* input = malloc(1000 * sizeof(char));
+	printf("\nEnter command : ");
+	fgets(input, 1000, stdin);
+	do
+	{
+		if (parseInput(input))
+		{
+			printf("SCHEDULER EXIT CALLED! ALL JOBS WILL BE FINISHED BEFORE EXITING\n");
+			break;
+		}
+		printf("\n");
+		printf("Enter command : ");
+	} while (fgets(input, 1000, stdin));
+
+	pthread_join(schedulerThread, NULL);
+	freeJobController();
+	free(input);
+	printf("All jobs finished! Scheduler exiting finally!\n");
+	return 0;
+}
